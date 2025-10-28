@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>１次不定方程式に向かうための基礎力アップトレーニング</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap');
+
+        body {
+            font-family: 'Kosugi Maru', sans-serif;
+            background: linear-gradient(135deg, #f06d06, #f7d63d, #6ef780, #3de0f7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px 50px;
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            backdrop-filter: blur(5px);
+            border: 3px solid #ffcc00;
+        }
+
+        h1 {
+            color: #e94e77;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            position: relative;
+            animation: bounceIn 1s ease-out;
+            text-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+        }
+
+        h1::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            font-size: 0.8em;
+            transform: rotate(20deg);
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-button {
+            background-color: #ffd166;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            padding: 20px 30px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            width: calc(33% - 20px);
+            min-width: 250px;
+            box-sizing: border-box;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .category-button:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+            background-color: #ffb74d;
+        }
+
+        .category-button.completed {
+            background-color: #7ed957; /* 完了時の色 */
+            cursor: default;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .category-button.completed:hover {
+            transform: none;
+            background-color: #7ed957;
+        }
+
+        .quiz-section {
+            display: none;
+            background-color: #fce4ec;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 2px dashed #ff80ab;
+        }
+
+        .quiz-section h2 {
+            color: #e94e77;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            color: #555;
+            text-align: left;
+        }
+
+        .options label {
+            display: block;
+            background-color: #ffe082;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 1.1em;
+            color: #444;
+            border: 1px solid #ffcc80;
+        }
+
+        .options label:hover {
+            background-color: #ffd54f;
+            transform: translateX(5px);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.3);
+            vertical-align: middle;
+        }
+
+        .quiz-navigation {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .quiz-navigation button {
+            background-color: #81c784;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-navigation button:hover {
+            background-color: #66bb6a;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #check-answer-btn {
+            background-color: #ff8a65;
+        }
+        #check-answer-btn:hover {
+            background-color: #ff7043;
+        }
+
+        #back-to-categories {
+            background-color: #90a4ae;
+        }
+        #back-to-categories:hover {
+            background-color: #78909c;
+        }
+
+        .result-message {
+            font-size: 1.5em;
+            color: #e91e63;
+            margin-top: 20px;
+            font-weight: bold;
+            animation: fadeInScale 1s ease-out;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.1);
+        }
+
+        .explanation {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 1.1em;
+            color: #333;
+            line-height: 1.6;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .explanation strong {
+            color: #1976d2;
+        }
+
+        #final-message {
+            font-size: 3em;
+            color: #4CAF50;
+            margin-top: 50px;
+            font-weight: bold;
+            display: none;
+            animation: tada 1.5s ease infinite;
+            text-shadow: 4px 4px 6px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        #final-message::before, #final-message::after {
+            content: '🎉';
+            position: absolute;
+            font-size: 0.6em;
+            animation: floatUpDown 2s ease-in-out infinite;
+        }
+        #final-message::before { left: -40px; top: 0; }
+        #final-message::after { right: -40px; bottom: 0; animation-delay: 0.5s; }
+
+
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80%, 100% {
+                -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+            0% {
+                opacity: 0;
+                -webkit-transform: scale3d(.3, .3, .3);
+                transform: scale3d(.3, .3, .3);
+            }
+            20% {
+                -webkit-transform: scale3d(1.1, 1.1, 1.1);
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+            40% {
+                -webkit-transform: scale3d(.9, .9, .9);
+                transform: scale3d(.9, .9, .9);
+            }
+            60% {
+                opacity: 1;
+                -webkit-transform: scale3d(1.03, 1.03, 1.03);
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+            80% {
+                -webkit-transform: scale3d(.97, .97, .97);
+                transform: scale3d(.97, .97, .97);
+            }
+            100% {
+                opacity: 1;
+                -webkit-transform: scale3d(1, 1, 1);
+                transform: scale3d(1, 1, 1);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes tada {
+            0% { transform: scale(1); }
+            10% { transform: scale(0.9) rotate(-3deg); }
+            20% { transform: scale(0.9) rotate(-3deg); }
+            30% { transform: scale(1.1) rotate(3deg); }
+            40% { transform: scale(1.1) rotate(-3deg); }
+            50% { transform: scale(1.1) rotate(3deg); }
+            60% { transform: scale(1.1) rotate(-3deg); }
+            70% { transform: scale(1.1) rotate(3deg); }
+            80% { transform: scale(1.1) rotate(-3deg); }
+            90% { transform: scale(1.1) rotate(3deg); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>１次不定方程式に向かうための基礎力アップトレーニング</h1>
+
+        <div class="category-buttons">
+            <button class="category-button" data-category="moji" id="btn-moji">① 文字式・方程式の扱い方</button>
+            <button class="category-button" data-category="hi" id="btn-hi">② 比と比例の理解</button>
+            <button class="category-button" data-category="seisu" id="btn-seisu">③ 整数の性質</button>
+        </div>
+
+        <div id="quiz-section" class="quiz-section">
+            <h2 id="quiz-title"></h2>
+            <div id="question-area">
+                <p class="question" id="current-question"></p>
+                <div class="options" id="options-area">
+                    <!-- Options will be loaded here by JavaScript -->
+                </div>
+            </div>
+            <p id="result-message" class="result-message"></p>
+            <div id="explanation-area" class="explanation" style="display: none;">
+                <!-- Explanation will be loaded here by JavaScript -->
+            </div>
+            <div class="quiz-navigation">
+                <button id="check-answer-btn">解答する</button>
+                <button id="next-question-or-retry" style="display: none;">次の問題へ</button>
+                <button id="back-to-categories">カテゴリーに戻る</button>
+            </div>
+        </div>
+
+        <p id="final-message">Now, you're ready! 🎉</p>
+    </div>
+
+    <script>
+        const categories = {
+            moji: {
+                title: "① 文字式・方程式の扱い方",
+                questions: [
+                    { q: "x - 5 = 12 を解きなさい。", options: ["x = 7", "x = 17", "x = -7", "x = -17"], answer: 1, explanation: "方程式は両辺に同じ数を足したり引いたりしても成り立ちます。x - 5 = 12 の両辺に5を足すと、x = 12 + 5 = 17 となります。" },
+                    { q: "3x + 4 = 19 を解きなさい。", options: ["x = 5", "x = 6", "x = 4", "x = 3"], answer: 0, explanation: "まず、両辺から4を引きます。3x = 19 - 4 = 15。次に、両辺を3で割ると、x = 15 / 3 = 5 となります。" },
+                    { q: "2(x + 3) = 14 を解きなさい。", options: ["x = 4", "x = 5", "x = 6", "x = 7"], answer: 0, explanation: "まず、分配法則を使って括弧を外します。2x + 6 = 14。次に、両辺から6を引くと、2x = 8。最後に両辺を2で割ると、x = 4 となります。" },
+                    { q: "xを消去してyについて解きなさい。\nx = y + 3\n2x + y = 12", options: ["y = 1", "y = 2", "y = 3", "y = 4"], answer: 1, explanation: "上の式を下の式に代入します。2(y + 3) + y = 12。分配法則で括弧を外し、2y + 6 + y = 12。整理すると 3y + 6 = 12。両辺から6を引くと 3y = 6。両辺を3で割ると y = 2 となります。" },
+                    { q: "次の式を簡単にしなさい: 5a + 3b - 2a + 7b", options: ["3a + 10b", "7a + 10b", "3a + 4b", "7a + 4b"], answer: 0, explanation: "同類項をまとめます。aの項: 5a - 2a = 3a。bの項: 3b + 7b = 10b。したがって、3a + 10b となります。" }
+                ]
+            },
+            hi: {
+                title: "② 比と比例の理解",
+                questions: [
+                    { q: "2 : 3 = x : 9 のとき、xの値を求めなさい。", options: ["x = 6", "x = 8", "x = 10", "x = 12"], answer: 0, explanation: "比の値は等しいので、2/3 = x/9 となります。両辺に9をかけると x = (2/3) * 9 = 6 となります。または、内項の積と外項の積が等しいので、3x = 2 * 9 = 18。よって x = 6 となります。" },
+                    { q: "12個のリンゴをAさんとBさんで2:1に分けるとき、Aさんは何個もらえますか？", options: ["4個", "6個", "8個", "10個"], answer: 2, explanation: "AさんとBさんで分ける比は2:1なので、全体の割合は2+1=3となります。Aさんの割合は2/3なので、12個の2/3は 12 * (2/3) = 8個 となります。" },
+                    { q: "yはxに比例し、x = 3 のとき y = 15 です。比例定数を求めなさい。", options: ["3", "4", "5", "6"], answer: 2, explanation: "yはxに比例するので、y = ax (aは比例定数) の関係があります。x = 3, y = 15 を代入すると、15 = a * 3 となり、a = 15 / 3 = 5 となります。" },
+                    { q: "yはxに比例し、x = 2 のとき y = 8 です。y = 20 のときのxの値を求めなさい。", options: ["x = 4", "x = 5", "x = 6", "x = 7"], answer: 1, explanation: "まず比例定数を求めます。y = ax に x = 2, y = 8 を代入すると、8 = a * 2 なので a = 4。比例の式は y = 4x となります。次に、y = 20 を代入すると、20 = 4x となり、x = 20 / 4 = 5 となります。" },
+                    { q: "Aの量がBの量の3倍であるとき、AとBの比を最も簡単な整数比で表しなさい。", options: ["1 : 3", "3 : 1", "2 : 3", "3 : 2"], answer: 1, explanation: "Bの量を1とすると、Aの量はその3倍なので3となります。したがって、A:B = 3:1 となります。" }
+                ]
+            },
+            seisu: {
+                title: "③ 整数の性質",
+                questions: [
+                    { q: "18の正の約数をすべて挙げなさい。", options: ["[1, 2, 3, 6, 9, 18]", "[1, 2, 3, 4, 9, 18]", "[1, 2, 6, 9, 18]", "[1, 3, 6, 9, 18]"], answer: 0, explanation: "約数とは、その数を割り切ることができる整数です。18を割り切れる数は、1, 2, 3, 6, 9, 18 です。" },
+                    { q: "24と36の最大公約数を求めなさい。", options: ["6", "8", "12", "18"], answer: 2, explanation: "24の約数: 1, 2, 3, 4, 6, 8, 12, 24。36の約数: 1, 2, 3, 4, 6, 9, 12, 18, 36。共通する約数の中で最も大きいのは12です。" },
+                    { q: "6と9の最小公倍数を求めなさい。", options: ["18", "36", "54", "6"], answer: 0, explanation: "6の倍数: 6, 12, 18, 24, 30, ...。9の倍数: 9, 18, 27, 36, ...。共通する倍数の中で最も小さいのは18です。" },
+                    { q: "素数であるものをすべて選びなさい: 1, 2, 9, 13, 21", options: ["[1, 2, 13]", "[2, 13]", "[2, 9, 13]", "[1, 2, 9, 13]"], answer: 1, explanation: "素数とは、1とその数自身以外に正の約数を持たない自然数です。1は素数ではありません。2は唯一の偶数の素数です。9は3で割れるので素数ではありません。13は素数です。21は3と7で割れるので素数ではありません。したがって、素数は2と13です。" },
+                    { q: "4で割ると1余る数を、整数nを使って表しなさい。", options: ["4n", "4n + 1", "4n - 1", "n + 4"], answer: 1, explanation: "4で割り切れる数は4nと表せます。それに1余るということは、4nに1を足せばよいので、4n + 1 となります。 (nは0または正の整数)" }
+                ]
+            }
+        };
+
+        const categoryButtons = document.querySelectorAll('.category-button');
+        const quizSection = document.getElementById('quiz-section');
+        const quizTitle = document.getElementById('quiz-title');
+        const currentQuestionElem = document.getElementById('current-question');
+        const optionsArea = document.getElementById('options-area');
+        const checkAnswerButton = document.getElementById('check-answer-btn');
+        const nextQuestionOrRetryButton = document.getElementById('next-question-or-retry');
+        const backToCategoriesButton = document.getElementById('back-to-categories');
+        const resultMessage = document.getElementById('result-message');
+        const explanationArea = document.getElementById('explanation-area');
+        const finalMessage = document.getElementById('final-message');
+
+        let currentCategory = '';
+        let currentQuestionIndex = 0;
+        let completedCategories = {}; // クリア状態はlocalStorageに保存せず、ページロード時のみリセット
+
+        // ページロード時にボタンの状態を初期化
+        function initializeCategoryButtons() {
+            Object.keys(categories).forEach(cat => {
+                document.getElementById(`btn-${cat}`).classList.remove('completed');
+            });
+            completedCategories = {}; // 内部状態もリセット
+            finalMessage.style.display = 'none'; // 最終メッセージも非表示に
+            categoryButtons.forEach(button => {
+                button.disabled = false; // ボタンを有効化
+            });
+        }
+        initializeCategoryButtons(); // ページロード時に実行
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // completedクラスはページリフレッシュで消えるので、このチェックは不要になる
+                // if (button.classList.contains('completed')) {
+                //     alert('このカテゴリーはすでにクリア済みです！');
+                //     return;
+                // }
+                currentCategory = button.dataset.category;
+                currentQuestionIndex = 0;
+                showQuizSection();
+                loadQuestion();
+            });
+        });
+
+        checkAnswerButton.addEventListener('click', () => {
+            checkAnswer();
+        });
+
+        nextQuestionOrRetryButton.addEventListener('click', () => {
+            if (resultMessage.textContent.includes('残念！')) {
+                // 不正解だったので最初からやり直し
+                currentQuestionIndex = 0;
+                resultMessage.textContent = '';
+                explanationArea.style.display = 'none';
+                loadQuestion();
+            } else {
+                // 正解だったので次の問題へ
+                currentQuestionIndex++;
+                resultMessage.textContent = '';
+                explanationArea.style.display = 'none';
+                if (currentQuestionIndex < categories[currentCategory].questions.length) {
+                    loadQuestion();
+                } else {
+                    // 全問正解
+                    markCategoryCompleted();
+                }
+            }
+        });
+
+
+        backToCategoriesButton.addEventListener('click', () => {
+            quizSection.style.display = 'none';
+            document.querySelector('.category-buttons').style.display = 'flex';
+            resultMessage.textContent = '';
+            explanationArea.style.display = 'none';
+        });
+
+        function showQuizSection() {
+            document.querySelector('.category-buttons').style.display = 'none';
+            quizSection.style.display = 'block';
+            resultMessage.textContent = '';
+            explanationArea.style.display = 'none';
+            quizTitle.textContent = categories[currentCategory].title;
+            checkAnswerButton.style.display = 'inline-block';
+            nextQuestionOrRetryButton.style.display = 'none';
+        }
+
+        function loadQuestion() {
+            const questionData = categories[currentCategory].questions[currentQuestionIndex];
+            currentQuestionElem.textContent = `Q${currentQuestionIndex + 1}. ${questionData.q}`;
+            optionsArea.innerHTML = '';
+
+            questionData.options.forEach((option, index) => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'quiz-option';
+                radio.value = index;
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(option));
+                optionsArea.appendChild(label);
+            });
+
+            checkAnswerButton.style.display = 'inline-block';
+            nextQuestionOrRetryButton.style.display = 'none';
+            resultMessage.textContent = '';
+            explanationArea.style.display = 'none';
+
+            document.querySelectorAll('input[name="quiz-option"]').forEach(radio => radio.checked = false);
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
+            const questionData = categories[currentCategory].questions[currentQuestionIndex];
+
+            if (!selectedOption) {
+                alert('選択肢を選んでください！');
+                return;
+            }
+
+            const isCorrect = parseInt(selectedOption.value) === questionData.answer;
+
+            explanationArea.innerHTML = `<strong>解説:</strong><br>${questionData.explanation}`;
+            explanationArea.style.display = 'block';
+
+            if (isCorrect) {
+                resultMessage.textContent = '正解！素晴らしい！✨';
+                nextQuestionOrRetryButton.textContent = '次の問題へ';
+            } else {
+                resultMessage.textContent = '残念！もう一度挑戦しよう！💦 (このカテゴリーの最初からやり直し)';
+                nextQuestionOrRetryButton.textContent = '最初からやり直す';
+            }
+
+            checkAnswerButton.style.display = 'none';
+            nextQuestionOrRetryButton.style.display = 'inline-block';
+        }
+
+        function markCategoryCompleted() {
+            resultMessage.textContent = '全問正解！おめでとうございます！🎉';
+            document.getElementById(`btn-${currentCategory}`).classList.add('completed');
+            completedCategories[currentCategory] = true; // 内部状態は更新
+            // localStorage.setItem('completedCategories', JSON.stringify(completedCategories)); // ★この行を削除
+            nextQuestionOrRetryButton.style.display = 'none';
+            checkAllCategoriesCompleted();
+        }
+
+        function checkAllCategoriesCompleted() {
+            const allCompleted = Object.keys(categories).every(cat => completedCategories[cat]);
+            if (allCompleted) {
+                finalMessage.style.display = 'block';
+                categoryButtons.forEach(button => {
+                    button.disabled = true;
+                });
+            } else {
+                finalMessage.style.display = 'none';
+                categoryButtons.forEach(button => {
+                    // クリア済みのボタンは無効化、未クリアのボタンは有効化（ただしcompletedクラスは残す）
+                    // ページリフレッシュで全てリセットされるため、disabled状態の制御は不要だが、念のため
+                    button.disabled = button.classList.contains('completed');
+                });
+            }
+        }
+
+        // ページロード時の初期化はinitializeCategoryButtons()で実施済み
+        // checkAllCategoriesCompleted();
+    </script>
+</body>
+</html>
